@@ -1,0 +1,770 @@
+<ol class="hljs-ln" style="width:1334px">
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="1"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-operator">/</span><span class="hljs-operator">/</span> SPDX-License-Identifier: MIT</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="2"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line">pragma solidity ^<span class="hljs-number">0.6.2</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="3"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line">import <span class="hljs-string">"./ERC20.sol"</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="4"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line">contract Token <span class="hljs-keyword">is</span> ERC<span class="hljs-number">20</span>{</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="5"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> </div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="6"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">string</span> private _name; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>币名字</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="7"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">string</span> private _symbol; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>币符号</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="8"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">address</span> public deadwallet <span class="hljs-operator">=</span> <span class="hljs-number">0</span>x<span class="hljs-number">0000000000000000000000000000000000000000</span>; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>销毁地址</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="9"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">address</span> public LiquityWallet; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>铸币钱包</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="10"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> mapping(<span class="hljs-keyword">address</span> <span class="hljs-operator">=</span><span class="hljs-operator">&gt;</span> bool) public _isBlacklisted; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>是否是黑名单,<span class="hljs-keyword">true</span>表示这个地址是黑名单</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="11"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> public tradingEnabledTimestamp <span class="hljs-operator">=</span> <span class="hljs-number">1627779600</span>; <span class="hljs-operator">/</span><span class="hljs-operator">/</span><span class="hljs-number">10</span>:<span class="hljs-number">00</span>pm <span class="hljs-operator">/</span><span class="hljs-operator">/</span><span class="hljs-number">2021</span>-<span class="hljs-number">08</span>-<span class="hljs-number">1</span> <span class="hljs-number">9</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span>的时间戳，这里设置开盘时间，开盘时间逻辑后面再提，这里先注重防机器人</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="12"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> public launchedAt; </div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="13"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">address</span> private _marketingWalletAddress; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>营销钱包，收手续费的</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="14"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> marketingFee <span class="hljs-operator">=</span> <span class="hljs-number">4</span>; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>营销钱包收进的手续费</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="15"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> mapping(<span class="hljs-keyword">address</span> <span class="hljs-operator">=</span><span class="hljs-operator">&gt;</span> bool) private _isExcludedFromFees; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>判断是否此账号需要手续费，<span class="hljs-keyword">true</span>为不需要手续费</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="16"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">*</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="17"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> * @dev 返回代币的名字</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="18"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> */</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="19"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> name() public view virtual returns (<span class="hljs-keyword">string</span> memory) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="20"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> _name;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="21"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="22"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">**</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="23"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> * @dev 返回代币的符号</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="24"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> */</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="25"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> symbol() public view virtual returns (<span class="hljs-keyword">string</span> memory) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="26"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> _symbol;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="27"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="28"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">**</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="29"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> * 返回代币精度</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="30"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"><span class="hljs-comment"> */</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="31"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> decimals() public pure virtual returns (uint<span class="hljs-number">8</span>) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="32"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> <span class="hljs-number">18</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="33"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="34"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> constructor() public{</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="35"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> _name<span class="hljs-operator">=</span><span class="hljs-string">'Token'</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="36"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> _symbol<span class="hljs-operator">=</span><span class="hljs-string">'Tk'</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="37"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> _mint(msg.sender, <span class="hljs-number">10000000000000</span> <span class="hljs-operator">*</span> (<span class="hljs-number">10</span> <span class="hljs-operator">**</span> <span class="hljs-number">18</span>)); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>铸币给连接此合约的账号于<span class="hljs-number">10000000000000</span>个币;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="38"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> LiquityWallet<span class="hljs-operator">=</span>msg.sender;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="39"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span> exclude <span class="hljs-keyword">from</span> paying fees <span class="hljs-keyword">or</span> having max transaction amount 排除支付费用或拥有最大交易金额</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="40"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> excludeFromFees(LiquityWallet, <span class="hljs-keyword">true</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>排除流动性钱包的支付手续费和最大交易金额</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="41"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> excludeFromFees(<span class="hljs-keyword">address</span>(this), <span class="hljs-keyword">true</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>排除铸币钱包的支付手续费和最大交易金额</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="42"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> excludeFromFees(_marketingWalletAddress, <span class="hljs-keyword">true</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>排除营销钱包的支付手续费和最大交易金额</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="43"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="44"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span>交易函数</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="45"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> _transfer(<span class="hljs-keyword">address</span> recipient, uint<span class="hljs-number">256</span> amount) public returns (bool) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="46"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> require(!_isBlacklisted[msg.sender], <span class="hljs-string">'Blacklisted address'</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果发送方是黑名单则禁止交易</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="47"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(LiquityWallet!<span class="hljs-operator">=</span>msg.sender) <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transfer(recipient, amount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果铸币方是发送方则不需要销毁</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="48"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">block</span>.timestamp <span class="hljs-operator">&lt;=</span> tradingEnabledTimestamp <span class="hljs-operator">+</span> <span class="hljs-number">9</span> seconds) { <span class="hljs-operator">/</span><span class="hljs-operator">/</span>当前块的时间戳小于等于 可交易时间戳<span class="hljs-operator">+</span><span class="hljs-number">9</span>秒。</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="49"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> addBot(msg.sender); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>把当前地址添加黑名单</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="50"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="51"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(!_isExcludedFromFees[msg.sender]){</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="52"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> BurnWallet <span class="hljs-operator">=</span> amount.mul(<span class="hljs-number">5</span>).div(<span class="hljs-number">100</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>销毁百分之<span class="hljs-number">5</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="53"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> marketFee<span class="hljs-operator">=</span>amount.mul(marketingFee).div(<span class="hljs-number">100</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>团队手续费</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="54"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> trueAmount <span class="hljs-operator">=</span> amount.sub(BurnWallet).sub(marketFee); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>剩下的就是要发送的</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="55"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">super</span>.transfer(deadwallet, BurnWallet); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>销毁这百分之<span class="hljs-number">5</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="56"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">super</span>.transfer(_marketingWalletAddress,marketFee); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>发送给营销账号</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="57"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transfer(recipient, trueAmount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>发送那<span class="hljs-number">95</span>%的代币</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="58"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }<span class="hljs-keyword">else</span>{</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="59"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transfer(recipient,amount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果是项目方则不需要销毁和手续费； </div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="60"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="61"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="62"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> _transferFrom(<span class="hljs-keyword">address</span> sender, <span class="hljs-keyword">address</span> recipient, uint<span class="hljs-number">256</span> amount) public returns (bool) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="63"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> require(!_isBlacklisted[msg.sender], <span class="hljs-string">'Blacklisted address'</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果发送方是黑名单则禁止交易</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="64"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(LiquityWallet!<span class="hljs-operator">=</span>msg.sender) <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transfer(recipient, amount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果铸币方是发送方则不需要销毁</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="65"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">block</span>.timestamp <span class="hljs-operator">&lt;=</span> tradingEnabledTimestamp <span class="hljs-operator">+</span> <span class="hljs-number">9</span> seconds) { <span class="hljs-operator">/</span><span class="hljs-operator">/</span>当前块的时间戳小于等于 可交易时间戳<span class="hljs-operator">+</span><span class="hljs-number">9</span>秒。</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="66"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> addBot(msg.sender); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>把当前地址添加黑名单</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="67"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="68"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span>(!_isExcludedFromFees[msg.sender]){</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="69"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> BurnWallet <span class="hljs-operator">=</span> amount.mul(<span class="hljs-number">5</span>).div(<span class="hljs-number">100</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>销毁百分之<span class="hljs-number">5</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="70"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> marketFee<span class="hljs-operator">=</span>amount.mul(marketingFee).div(<span class="hljs-number">100</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>团队手续费</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="71"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> uint<span class="hljs-number">256</span> trueAmount <span class="hljs-operator">=</span> amount.sub(BurnWallet).sub(marketFee); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>剩下的就是要发送的</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="72"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">super</span>.transferFrom(sender, deadwallet, BurnWallet); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>销毁这百分之<span class="hljs-number">5</span></div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="73"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">super</span>.transferFrom(sender, _marketingWalletAddress, marketFee); <span class="hljs-operator">/</span><span class="hljs-operator">/</span> 发送给营销账号</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="74"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transferFrom(sender, recipient, trueAmount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>发送剩下的币</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="75"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }<span class="hljs-keyword">else</span>{</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="76"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.transferFrom(sender, recipient, amount); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果是项目方则不需要销毁和手续费； </div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="77"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="78"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="79"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span>设置黑名单地址</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="80"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> blacklistAddress(<span class="hljs-keyword">address</span> account, bool <span class="hljs-keyword">value</span>) public {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="81"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> _isBlacklisted[account] <span class="hljs-operator">=</span> <span class="hljs-keyword">value</span>; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果是<span class="hljs-keyword">true</span>就是黑名单</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="82"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="83"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span>添加黑名单的函数</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="84"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> addBot(<span class="hljs-keyword">address</span> recipient) private {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="85"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">if</span> (!_isBlacklisted[recipient]) _isBlacklisted[recipient] <span class="hljs-operator">=</span> <span class="hljs-keyword">true</span>;</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="86"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="87"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span>排除手续费</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="88"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> excludeFromFees(<span class="hljs-keyword">address</span> account, bool excluded) public{ </div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="89"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> require(_isExcludedFromFees[account] !<span class="hljs-operator">=</span> excluded, <span class="hljs-string">"RedCheCoin Account is already the value of 'excluded'"</span>); <span class="hljs-operator">/</span><span class="hljs-operator">/</span>如果已经排除就跳出</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="90"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> _isExcludedFromFees[account] <span class="hljs-operator">=</span> excluded; <span class="hljs-operator">/</span><span class="hljs-operator">/</span>设置是否排除的布尔值</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="91"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="92"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-operator">/</span><span class="hljs-operator">/</span>返回是否除外手续费的布尔值</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="93"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">function</span> isExcludedFromFees(<span class="hljs-keyword">address</span> account) public view returns (bool) {</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="94"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> <span class="hljs-keyword">return</span> _isExcludedFromFees[account];</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="95"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line"> }</div>
+            </div>
+        </li>
+        <li>
+            <div class="hljs-ln-numbers">
+                <div class="hljs-ln-line hljs-ln-n" data-line-number="96"></div>
+            </div>
+            <div class="hljs-ln-code">
+                <div class="hljs-ln-line">}</div>
+            </div>
+        </li>
+    </ol>
