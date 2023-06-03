@@ -20,6 +20,7 @@ def deleteContract(contractAddess):
     jsonData = json.dumps(params)
     response = requests.post(url, data=jsonData, headers=headers)
     print(response.text)
+    response.close()
 
 
 def favriteContract():
@@ -27,7 +28,7 @@ def favriteContract():
     url = "https://api.hserpcvice.com/v1api/v2/tokens/favorite?address=0x3cbd3b92608fa8a14574762718ba85bf0857fa86&group=-1"  # 要访问的网站 URL
     response = requests.get(url, headers=headers)
     responseDataJson = json.loads(response.text)
-
+    response.close()
     # 进行 Base64 解码
     decoded_message = base64.b64decode(responseDataJson["encode_data"].encode('utf-8'))
     messageStr = unquote(decoded_message.decode('utf-8').replace("/\+/g", " "))
@@ -39,11 +40,13 @@ def favriteContract():
     return contractList
 
 
+
 def queryContractTransMessage(contractAddress):
     try:
         url = f"https://api.hserpcvice.com/v1api/v3/tokens/{contractAddress}-eth"  # 要访问的网站 URL
         response = requests.get(url, headers=headers)
         reponseMessage = response.text
+        response.close()
         if reponseMessage.__contains__("Fail"):
             return True
         responseDataJson = json.loads(response.text)
