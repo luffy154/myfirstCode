@@ -75,13 +75,13 @@ def download(url, aweme_id, desc):
     videoRes = requests.get(url=videoUrl, headers=headers, stream=True, timeout=30000)
     content_size = int(int(videoRes.headers['Content-Length']) / 1024)
     print(content_size)
-    with open(f'Download/{file_name}', "wb") as f:
-        print("Total Size: ", content_size, 'k,start...')
-        for data in tqdm(iterable=videoRes.iter_content(1024), total=content_size, unit='k', desc=file_name[:19]):
-            f.write(data)
-        print(file_name[:19], "download finished!")
-        f.flush()
-        f.close()
+    # with open(f'Download/{file_name}', "wb") as f:
+    #     print("Total Size: ", content_size, 'k,start...')
+    #     for data in tqdm(iterable=videoRes.iter_content(1024), total=content_size, unit='k', desc=file_name[:19]):
+    #         f.write(data)
+    #     print(file_name[:19], "download finished!")
+    #     f.flush()
+    #     f.close()
 
 def get_file_content(filename):
     jsonStr = ""
@@ -90,24 +90,75 @@ def get_file_content(filename):
             for line in f:
                 jsonStr += line
     return jsonStr
+
+def download_tiktok(aweme_id):
+    file_name = aweme_id + "-自然美景分享 #美景  #自然景观 #放松心情 #舒适 #安逸.mp4"
+    if os.path.exists(f'Download_TikTok/{file_name}'):
+        print("文件已经存在：", file_name)
+        return
+    tikData = get_tiktok_video_data(aweme_id)
+    videoUrl = tikData['video']['play_addr']['url_list'][0]
+    print(videoUrl)
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/95.0.4638.84 Safari/537.36',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,'
+                  'application/signed-exchange;v=b3;q=0.9',
+    }
+    videoRes = requests.get(url=videoUrl, headers=headers, stream=True, timeout=30000)
+    content_size = int(int(videoRes.headers['Content-Length']) / 1024)
+    print(content_size)
+    with open(f'Download_tiktok/{file_name}', "wb") as f:
+        print("Total Size: ", content_size, 'k,start...')
+        for data in tqdm(iterable=videoRes.iter_content(1024), total=content_size, unit='k', desc=file_name[:19]):
+            f.write(data)
+        print(file_name[:19], "download finished!")
+        f.flush()
+        f.close()
 def main(link):
-    jsonStr = get_file_content("json.text")
+    jsonStr = get_file_content("tiktok.txt")
     data = json.loads(jsonStr)
     all_data = []
-    for item in data['aweme_list']:
-        all_data.append({
-            "id": item['aweme_id'],
-            "desc": item['desc'],
-            "src": item['author']['avatar_thumb']['uri']
-        })
+    for item in data['itemList']:
+        all_data.append(item['id'])
+    # all_data = [
+    #
+    # ]
     for item in all_data:
-        try:
-            download(url=item["src"], aweme_id=item["id"], desc=item["desc"])
-        except Exception as e:
-            with open('error.log', 'a', encoding='utf-8') as f:
-                f.write('error at' + item['src'] + str(e) + '\n')
-                f.close()
+        download_tiktok(aweme_id=item)
 
+def get_tiktok_video_data(video_id: str):
+    print('正在获取TikTok视频数据...')
+    try:
+        # 构造访问链接/Construct the access link
+        api_url = f'https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id={video_id}'
+        print("正在获取视频数据API: {}".format(api_url))
+        tiktok_api_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,'
+                      'application/signed-exchange;v=b3;q=0.9'
+        }
+        response = requests.get(api_url, headers=tiktok_api_headers,timeout=30000)
+        resJson = json.loads(response.text)
+        response.close()
+        video_data = resJson['aweme_list'][0]
+        print('获取视频信息成功！')
+        return video_data
+    except Exception as e:
+        print('获取视频信息失败！原因:{}'.format(e))
+        # return None
+        raise e
+
+def get_url(text: str):
+    try:
+        # 从输入文字中提取索引链接存入列表/Extract index links from input text and store in list
+        url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
+        # 判断是否有链接/Check if there is a link
+        if len(url) > 0:
+            return url[0]
+    except Exception as e:
+        print('Error in get_url:', e)
+        return None
 
 if __name__ == "__main__":
     try:
@@ -115,3 +166,4 @@ if __name__ == "__main__":
     except FileExistsError:
         print("exists")
     main('https://www.douyin.com/user/MS4wLjABAAAAYFnqGRaFV98S4F4PH0l2oTBjKRpFQ1sUaoN8HzkfBN8twmlcQp355vMWj7iKSkNZ')
+

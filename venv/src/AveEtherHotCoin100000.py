@@ -4,17 +4,20 @@ from urllib.parse import unquote
 import json
 from cron_lite import cron_task, start_all
 
-authCode = "c905f094c965996cc53a2f7eb44d46951687443733688671254"
-headers = {"User-Agent": "PostmanRuntime/7.31.3",
-           "Accept": "*/*",
+authCode = "28620d1428cb82ed0a702e9cb7ccbbe61694874069472104471"
+Signature = "0x123952b6c2473e0870f895c617e84fd1b719fad5da501de60124d91c0b5fa97e354a9d2fa0430a654db2a8989396055e73761912aa3ee1c6ed93ac3eda6501291c"
+headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+           "Accept": "application/json, text/plain, */*",
            "Accept-Encoding": "gzip, deflate, br",
+           "Ave-Udid":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36--1694874063047--69629aa6-ad36-4911-a604-cf28fd398cf5",
+           "Signature": f"{Signature}",
            "X-Auth": f"{authCode}"}
 contract_address_list_has_add = []
 
 
 @cron_task("30 0/1 * * * 0")
 def favriteContract():
-    url = "https://api.hserpcvice.com/v1api/v2/tokens/favorite?address=0x3cbd3b92608fa8a14574762718ba85bf0857fa86&group=-1"  # 要访问的网站 URL
+    url = "https://api.fgsasd.org/v1api/v3/tokens/favorite?address=0x3cbd3b92608fa8a14574762718ba85bf0857fa86&group=0"  # 要访问的网站 URL
     response = requests.get(url, headers=headers)
     responseDataJson = json.loads(response.text)
     response.close()
@@ -25,10 +28,11 @@ def favriteContract():
     json_obj = json.loads(messageStr)
     for obj in json_obj:
         contractAddress = obj["token"]
-        if queryContractTransMessage(contractAddress):
-            deleteContract(contractAddress)
-            addSelfList(contractAddress)
-            print("转换新的合约地址", contractAddress)
+        deleteContract(contractAddress)
+    # if queryContractTransMessage(contractAddress):
+        #     deleteContract(contractAddress)
+        #     addSelfList(contractAddress)
+        #     print("转换新的合约地址", contractAddress)
 
 def queryContractTransMessage(contractAddress):
     try:

@@ -2,12 +2,14 @@ import requests
 import base64
 from urllib.parse import unquote
 import json
+import traceback
 from cron_lite import cron_task, start_all
 
-authCode = "c905f094c965996cc53a2f7eb44d46951687443733688671254"
+authCode = "2e95d91acc2a9c7dc0b3c065452d17161698764707820985531"
 headers = {"User-Agent": "PostmanRuntime/7.31.3",
            "Accept": "*/*",
            "Accept-Encoding": "gzip, deflate, br",
+           "Signature":"0x123952b6c2473e0870f895c617e84fd1b719fad5da501de60124d91c0b5fa97e354a9d2fa0430a654db2a8989396055e73761912aa3ee1c6ed93ac3eda6501291c",
            "X-Auth": f"{authCode}"}
 contract_address_list_has_add = []
 
@@ -44,23 +46,29 @@ def queryContractTransMessage(contractAddress):
         if reponseMessage.__contains__("Fail"):
             return False
         responseDataJson = json.loads(response.text)
-
-        tokenInfo = responseDataJson["data"]["token"]
-        marketInfo = responseDataJson["data"]["pairs"][0]
+        data = json.loads(responseDataJson["data"])
+        tokenInfo = data["token"]
+        marketInfo = data["pairs"][0]
         mCap = (float(tokenInfo["total"]) - tokenInfo["burn_amount"]) * tokenInfo["current_price_usd"]
         print(mCap)
         liquidity = marketInfo["reserve1"] * marketInfo["token1_price_usd"]
         print(liquidity)
+        # 持币人数
+        holders = tokenInfo['holders']
+        # 交易次数
+        txCount = marketInfo['tx_count']
+
         # 市值小于50万的币添加自选
-        if mCap < 500000:
+        if mCap < 5000000 and mCap > 10000 and holders>300 and txCount>100:
             return True
-    except:
+    except Exception as e:
         print(contractAddress, "查询市值失败")
+        traceback.print_exc()
     return False
 
 
 def addSelfList(contractAddress):
-    addUrl = "https://api.hserpcvice.com/v1api/v2/tokens/favorite/add"
+    addUrl = "https://api.fgsasd.org/v1api/v3/tokens/favorite/add"
     #  将合约地址加入自选
     params = {
         "address": "0x3cbd3b92608fa8a14574762718ba85bf0857fa86",
