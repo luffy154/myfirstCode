@@ -5,7 +5,7 @@ import json
 import traceback
 from cron_lite import cron_task, start_all
 
-authCode = "2e95d91acc2a9c7dc0b3c065452d17161698764707820985531"
+authCode = "d2f76bff48ae02909b1cb97c4f6baf821700102202319651807"
 headers = {"User-Agent": "PostmanRuntime/7.31.3",
            "Accept": "*/*",
            "Accept-Encoding": "gzip, deflate, br",
@@ -19,6 +19,7 @@ def queryHotCoin():
     myheaders = {"User-Agent": "PostmanRuntime/7.31.3",
                  "Accept": "*/*",
                  "Accept-Encoding": "gzip, deflate, br"}
+    # https://api.ooesafph5.com/v1api/v2/tokens/hot
     url = "https://api.hserpcvice.com/v1api/v2/discover/token_list?chain=eth&category=hot&pageSize=1000"  # 要访问的网站 URL
     response = requests.get(url, headers=myheaders)
     responseDataJson = json.loads(response.text)
